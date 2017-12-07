@@ -1,0 +1,1049 @@
+<template>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<Select v-model="part" style="width:200px" filterable>
+			        <Option v-for="(item,index) in partList" :value="item.department" :key="item.department">{{ item.department }}</Option>
+			    </Select>
+			</div>
+			<div class="col-md-3">
+				<Select v-model="sposition" style="width:200px" filterable>
+			        <Option v-for="(item,index) in positionList" :value="item.position" :key="item.position">{{ item.position }}</Option>
+			    </Select>
+			</div>
+			<div class="col-md-3">
+				<Input v-model="personname">
+			        <span slot="prepend">人员姓名</span>
+			    </Input>
+			</div>
+			<div class="col-md-3">
+				<Button type="primary" shape="circle" icon="ios-search" @click="search">搜索</Button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-1">
+				<Button type="success" shape="circle" icon="ios-plus" @click="modal1=true">新增</Button>
+			</div>
+			<div class="col-md-1">
+				<Button type="success" shape="circle" icon="upload">导入</Button>
+			</div>
+			<div class="col-md-1">
+				<Button type="warning" shape="circle" icon="ios-trash" @click="deletemore">批量删除</Button>
+			</div>
+		</div>
+		<div class="row">
+			<h3>员工列表</h3>
+			<br />
+<<<<<<< .mine
+			<div class="col-md-11 col-sm-11 col-xs-11">				
+				<Table heiglight-row border ref="selection" @on-select-all="getSelectId" @on-select="getSelectId" :columns="columns" :data="personInfo"></Table>
+			</div>
+			
+	    </div>
+	    <div class="row">
+			<Page :total="total*1" @on-change="change($event)" @on-page-size-change="changelimit($event)" show-total show-sizer style="text-align: center;"></Page>	
+	    </div>
+		<Modal
+        v-model="modal1"
+        title="新增员工"
+        @on-ok="addOK"
+        @on-cancel="cancel">
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">姓名</div>
+        	<div class="col-md-6">
+        		<input v-model="name" type="text" class="form-control" ref="name" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">性别</div>
+        	<div class="col-md-6">
+        		<RadioGroup v-model="sex" ref="sex">
+					<Radio label="男"></Radio>
+					<Radio label="女"></Radio>
+				</RadioGroup>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">部门</div>
+        	<div class="col-md-6">
+	        	<Select v-model="department" ref="department">
+					<Option v-for="(item,index) in partList" :value="item.department" :key="item.department">{{ item.department }}</Option>
+				</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">职位</div>
+        	<div class="col-md-6">
+        	<Select v-model="position" ref="position">
+				<Option v-for="(item,index) in positionList" :value="item.position" :key="item.position">{{ item.position }}</Option>
+			</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身高</div>
+        	<div class="col-md-6">
+        		<input v-model="height" type="text" class="form-control" ref="height" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">体重</div>
+        	<div class="col-md-6">
+        		<input type="text" v-model="weight" class="form-control" ref="weight" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">工资</div>
+        	<div class="col-md-6">
+        		<input v-model="salary" type="text" class="form-control" ref="salary" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">出生日期</div>
+        	<div class="col-md-6">
+        		<DatePicker ref="date" type="date" placeholder="选择日期"></DatePicker>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身份证号</div>
+        	<div class="col-md-6">
+        		<input v-model="idcard" type="text" class="form-control" ref="idcard" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">联系电话</div>
+        	<div class="col-md-6">
+        		<input v-model="phone" type="text" class="form-control" ref="phone" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">员工状态</div>
+        	<div class="col-md-6">
+        	<Select v-model="state" ref="state">
+				<Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			</Select>
+        	</div>
+        </div>
+    </Modal>
+    
+    <Modal
+        v-model="modal2"
+        title="修改员工信息"
+        @on-ok="updateOK"
+        @on-cancel="cancel">
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">姓名</div>
+        	<div class="col-md-6">
+        		<input v-model="upname" type="text" class="form-control" ref="name" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">性别</div>
+        	<div class="col-md-6">
+        		<RadioGroup v-model="upsex" ref="sex">
+					<Radio label="男"></Radio>
+					<Radio label="女"></Radio>
+				</RadioGroup>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">部门</div>
+        	<div class="col-md-6">
+	        	<Select v-model="updepartment" ref="department">
+					<Option v-for="(item,index) in partList" :value="item.department" :key="item.department">{{ item.department }}</Option>
+				</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">职位</div>
+        	<div class="col-md-6">
+        	<Select v-model="upposition" ref="position">
+				<Option v-for="(item,index) in positionList" :value="item.position" :key="item.position">{{ item.position }}</Option>
+			</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身高</div>
+        	<div class="col-md-6">
+        		<input v-model="upheight" type="text" class="form-control" ref="height" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">体重</div>
+        	<div class="col-md-6">
+        		<input type="text" v-model="upweight" class="form-control" ref="weight" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">工资</div>
+        	<div class="col-md-6">
+        		<input v-model="upsalary" type="text" class="form-control" ref="salary" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">出生日期</div>
+        	<div class="col-md-6">
+        		<DatePicker v-model="update" ref="brithday" type="date" placeholder="选择日期"></DatePicker>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身份证号</div>
+        	<div class="col-md-6">
+        		<input v-model="upidcard" type="text" class="form-control" ref="idcard" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">联系电话</div>
+        	<div class="col-md-6">
+        		<input v-model="upphone" type="text" class="form-control" ref="phone" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">员工状态</div>
+        	<div class="col-md-6">
+        	<Select v-model="upstate">
+				<Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			</Select>
+        	</div>
+        </div>
+    </Modal>
+    
+    <Modal v-model="selectconmit" width="360">
+        <p slot="header" style="color:#f60;text-align:center">
+            <Icon type="information-circled"></Icon>
+            <span>删除提示</span>
+        </p>
+        <div style="text-align:center">
+        	是否需要删除这条数据？
+        </div>
+        <div slot="footer">
+            <Button type="error" size="large" long  @click="del">确认删除</Button>
+        </div>
+    </Modal>
+    <Modal
+        v-model="modal3"
+        title="员工名片">
+        <div class="row">
+        	<div class="col-md-4">
+        		<Avatar icon="person" size="large" />
+        	</div>
+        	<div class="col-md-6">
+        		<p class="weight"><span>姓名：</span><span v-model="onename">{{onename}}</span></p>
+        		<p class="weight"><span>部门：</span><span v-model="onedepartment">{{onedepartment}}</span></p>
+        		<p class="weight"><span>职位：</span><span v-model="oneposition">{{oneposition}}</span></p>
+        		<p class="weight"><span>电话：</span><span v-model="onephone">{{onephone}}</span></p>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-4">
+        		<p class="smallfont"><span>性别：</span><span v-model="onesex">{{onesex}}</span></p>
+        		<p class="smallfont"><span>身高：</span><span v-model="oneheight">{{oneheight}}</span></p>
+        		<p class="smallfont"><span>体重：</span><span v-model="oneweight">{{oneweight}}</span></p>
+        		<p class="smallfont"><span>工资：</span><span v-model="onesalary">{{onesalary}}</span></p>
+        	</div>
+        	<div class="col-md-6">
+        		<p class="smallfont"><span>状态：</span><span v-if="onestate == 0">无效</span>
+        			<span v-else-if="onestate == 1">有效</span>
+        			<span v-else>注销</span>
+        		</p>
+        		<p class="smallfont"><span>身份证号：</span><span v-model="oneidcard">{{oneidcard}}</span></p>
+        		<p class="smallfont"><span>出生日期：</span><span v-model="onedate">{{onedate}}</span></p>
+        		<p class="smallfont"><span>注册日期：</span><span v-model="onecreate_time">{{onecreate_time}}</span></p>
+        	</div>
+        </div>
+    </Modal>
+    
+||||||| .r4
+			<Table border ref="selection" :columns="columns" :data="data"></Table>
+	        <Button @click="handleSelectAll(true)">全选</Button>
+	        <Button @click="handleSelectAll(false)">取消</Button>
+	        <Page :total="total*1" @on-change="change($event)" @on-page-size-change="changelimit($event)" show-total show-sizer style="text-align: center;"></Page>
+		</div>
+=======
+			<div class="col-md-11 col-sm-11 col-xs-11">				
+				<Table heiglight-row border ref="selection" @on-select-all="getSelectId" @on-select="getSelectId" :columns="columns" :data="personInfo"></Table>
+			</div>
+			
+	    </div>
+	    <div class="row">
+			<Page :total="total*1" @on-change="change($event)" @on-page-size-change="changelimit($event)" show-total show-sizer style="text-align: center;"></Page>	
+	    </div>
+		<Modal
+        v-model="modal1"
+        title="新增员工"
+        @on-ok="addOK"
+        @on-cancel="cancel">
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">姓名</div>
+        	<div class="col-md-6">
+        		<input v-model="name" type="text" @blur="blur()" class="form-control" ref="name" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">性别</div>
+        	<div class="col-md-6">
+        		<RadioGroup v-model="sex" ref="sex">
+					<Radio label="男"></Radio>
+					<Radio label="女"></Radio>
+				</RadioGroup>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">部门</div>
+        	<div class="col-md-6">
+	        	<Select v-model="department" ref="department">
+					<Option v-for="(item,index) in partList" :value="item.department" :key="item.department">{{ item.department }}</Option>
+				</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">职位</div>
+        	<div class="col-md-6">
+        	<Select v-model="position" ref="position">
+				<Option v-for="(item,index) in positionList" :value="item.position" :key="item.position">{{ item.position }}</Option>
+			</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身高</div>
+        	<div class="col-md-6">
+        		<input v-model="height" type="number" @blur="blur()" maxlength="3" class="form-control" ref="height" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">体重</div>
+        	<div class="col-md-6">
+        		<input type="number" v-model="weight" @blur="blur()" maxlength="3" class="form-control" ref="weight" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">工资</div>
+        	<div class="col-md-6">
+        		<input v-model="salary" type="number" @blur="blur()" maxlength="6" class="form-control" ref="salary" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">出生日期</div>
+        	<div class="col-md-6">
+        		<DatePicker ref="date" type="date" placeholder="选择日期"></DatePicker>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身份证号</div>
+        	<div class="col-md-6">
+        		<input v-model="idcard" type="number" @blur="blur()" maxlength="18" class="form-control" ref="idcard" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">联系电话</div>
+        	<div class="col-md-6">
+        		<input v-model="phone" type="number" @blur="blur()" maxlength="11" class="form-control" ref="phone" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">员工状态</div>
+        	<div class="col-md-6">
+        	<Select v-model="state" ref="state">
+				<Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			</Select>
+        	</div>
+        </div>
+    </Modal>
+    
+    <Modal
+        v-model="modal2"
+        title="修改员工信息"
+        @on-ok="updateOK"
+        @on-cancel="cancel">
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">姓名</div>
+        	<div class="col-md-6">
+        		<input v-model="upname" type="text" class="form-control" ref="name" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">性别</div>
+        	<div class="col-md-6">
+        		<RadioGroup v-model="upsex" ref="sex">
+					<Radio label="男"></Radio>
+					<Radio label="女"></Radio>
+				</RadioGroup>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">部门</div>
+        	<div class="col-md-6">
+	        	<Select v-model="updepartment" ref="department">
+					<Option v-for="(item,index) in partList" :value="item.department" :key="item.department">{{ item.department }}</Option>
+				</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">职位</div>
+        	<div class="col-md-6">
+        	<Select v-model="upposition" ref="position">
+				<Option v-for="(item,index) in positionList" :value="item.position" :key="item.position">{{ item.position }}</Option>
+			</Select>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身高</div>
+        	<div class="col-md-6">
+        		<input v-model="upheight" type="number" maxlength="3" class="form-control" ref="height" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">体重</div>
+        	<div class="col-md-6">
+        		<input type="number" v-model="upweight" maxlength="3" class="form-control" ref="weight" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">工资</div>
+        	<div class="col-md-6">
+        		<input v-model="upsalary" type="number" maxlength="6" class="form-control" ref="salary" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">出生日期</div>
+        	<div class="col-md-6">
+        		<DatePicker v-model="update" ref="brithday" type="date" placeholder="选择日期"></DatePicker>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">身份证号</div>
+        	<div class="col-md-6">
+        		<input v-model="upidcard" type="number" maxlength="18" class="form-control" ref="idcard" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">联系电话</div>
+        	<div class="col-md-6">
+        		<input v-model="upphone" type="number" maxlength="11" class="form-control" ref="phone" />
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-2 col-md-offset-1">员工状态</div>
+        	<div class="col-md-6">
+        	<Select v-model="upstate">
+				<Option v-for="item in stateList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			</Select>
+        	</div>
+        </div>
+    </Modal>
+    
+    <Modal v-model="selectconmit" width="360">
+        <p slot="header" style="color:#f60;text-align:center">
+            <Icon type="information-circled"></Icon>
+            <span>删除提示</span>
+        </p>
+        <div style="text-align:center">
+        	是否需要删除这条数据？
+        </div>
+        <div slot="footer">
+            <Button type="error" size="large" long  @click="del">确认删除</Button>
+        </div>
+    </Modal>
+    <Modal
+        v-model="modal3"
+        title="员工名片">
+        <div class="row">
+        	<div class="col-md-4">
+        		<Avatar icon="person" size="large" />
+        	</div>
+        	<div class="col-md-6">
+        		<p class="weight"><span>姓名：</span><span v-model="onename">{{onename}}</span></p>
+        		<p class="weight"><span>部门：</span><span v-model="onedepartment">{{onedepartment}}</span></p>
+        		<p class="weight"><span>职位：</span><span v-model="oneposition">{{oneposition}}</span></p>
+        		<p class="weight"><span>电话：</span><span v-model="onephone">{{onephone}}</span></p>
+        	</div>
+        </div>
+        <div class="row">
+        	<div class="col-md-4">
+        		<p class="smallfont"><span>性别：</span><span v-model="onesex">{{onesex}}</span></p>
+        		<p class="smallfont"><span>身高：</span><span v-model="oneheight">{{oneheight}}</span></p>
+        		<p class="smallfont"><span>体重：</span><span v-model="oneweight">{{oneweight}}</span></p>
+        		<p class="smallfont"><span>工资：</span><span v-model="onesalary">{{onesalary}}</span></p>
+        	</div>
+        	<div class="col-md-6">
+        		<p class="smallfont"><span>状态：</span><span v-if="onestate == 0">无效</span>
+        			<span v-else-if="onestate == 1">有效</span>
+        			<span v-else>注销</span>
+        		</p>
+        		<p class="smallfont"><span>身份证号：</span><span v-model="oneidcard">{{oneidcard}}</span></p>
+        		<p class="smallfont"><span>出生日期：</span><span v-model="onedate">{{onedate}}</span></p>
+        		<p class="smallfont"><span>注册日期：</span><span v-model="onecreate_time">{{onecreate_time}}</span></p>
+        	</div>
+        </div>
+    </Modal>
+    
+>>>>>>> .r23
+	</div>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				updateStaffId:'',
+				upname:'',upsex:'',updepartment:'',upposition:'',upheight:'',upweight:'',upsalary:'',
+				upidcard:'',upphone:'',upstate:'',
+				onename:'',onesex:'',onedepartment:'',oneposition:'',oneheight:'',oneweight:'',onesalary:'',
+				oneidcard:'',onephone:'',onestate:'',onecreate_time:'',onedate:'',
+				modal2:false,modal3:false,update:'',
+				total:'',modal1:false,sex:'',state:'',name:'',height:'',weight:'',salary:'',
+				idcard:'',phone:'',state:'',
+				part:'',sposition:'',personname:'',department:'',position:'',
+				selectconmit:false,
+				partList:[],
+				stateList:[{name:'无效',value:'0'},{name:'有效',value:'1'},{name:'注销',value:'9'}],
+				positionList:[{name:'普工',value:1},{name:'组长',value:2}],
+				personInfo:[],
+				columns:[{type: 'selection',width:60,align: 'center'},
+				{title:'姓名',key:'name'},
+				{title:'电话',key:'phone'},
+				{title:'性别',key:'sex',width:80},
+//				{title:'身高',key:'height'},
+//				{title:'体重',key:'weight'},
+//				{title:'身份证',key:'idcard_number',width:140},
+				{title:'部门',key:'department'},
+				{title:'职位',key:'position'},
+//				{title:'工资',key:'salary',width:90},
+//				{title:'出生日期',key:'birthday',width:100},
+//				{title:'状态',key:'state',width:80},
+				{title:'创建时间',key:'create_date'},
+				{title: '操作',
+                        key: 'action',
+//                      width: 180,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small',
+                                        icon: 'edit'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.show(params.row.id)
+                                        }
+                                    }
+                                }, ''),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small',
+                                        icon: 'trash-a'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.remove(params.row.id)
+                                        }
+                                    }
+                                }, ''),
+                                h('Button', {
+                                    props: {
+                                        type: 'success',
+                                        size: 'small',
+                                        icon: 'eye'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.seen(params.row.id)
+                                        }
+                                    }
+                                }, '')
+                            ]);
+                        }
+                    }],
+				data:[{code:'左线',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'},
+				{code:'左线',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'},
+				{code:'左线',id:'123',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'}],
+				limit:'10',
+				page:'1',
+				selected:[],
+				deletestaffid:'',
+				seenstaff:[]
+			}
+		},
+		mounted(){
+			this.getDerpartment()
+		},
+		methods:{
+<<<<<<< .mine
+			updateOK(){
+				var th = this;
+				var birthday = th.$refs.brithday.visualValue;
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/update',
+					data:{
+						"staff_id":th.updateStaffId,
+						"name":th.upname,
+						"sex":th.upsex,
+						"department":th.updepartment,
+						"position":th.upposition,
+						"height":th.upheight,
+						"weight":th.upweight,
+						"salary":th.upsalary,
+						"phone":th.upphone,
+						"birthday":birthday,
+						"idcard":th.upidcard,
+						"staff_state":th.upstate
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.code == 1){
+						th.$Message.success('修改成功');
+						th.getDerpartment();
+					}else{
+						th.$Message.error('修改失败')
+					};
+				})
+			},
+			getSelectId(selection){
+				this.selected = selection;
+			},
+			deletemore(){
+				var th = this;
+				console.log(this.selected);
+				var data = [];
+				for(var i=0;i<this.selected.length;i++){
+					data.push(th.selected[i].staff_id);
+				};
+				if(data.length == 0){
+					th.$Message.warning('请勾选需要删除的数据');
+					return false;
+				};
+				console.log('删除的条数'+data.length);
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/deletes',
+					data:{
+						"list":data
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.code == 1){
+						th.$Message.success('成功删除'+obj.data.data+'条数据');
+						th.getDerpartment()
+					}else{
+						th.$Message.error('删除失败')
+					};
+				})
+			},
+||||||| .r4
+=======
+			blur(){
+				if(this.name == '' || this.name == null){
+					this.$Message.warning('用户名不能为空')
+				};
+				if((this.height != '' || this.height != null) &&(!(/[1-2]\d{2}/.test(this.height)))){
+					this.$Message.warning('请输入正常的身高')
+					this.height = ''
+				};
+				if((this.weight != '' || this.weight != null) && (!(/^[1-2]\d{1,2}?/.test(this.weight)))){
+					this.$Message.warning('请输入正常的体重')
+					this.weight = ''
+				};
+				if((this.phone != '' || this.phone != null)&&(!(/^1[3|4|5|8][0-9]\d{4,8}$/.test(this.phone)))){
+					this.$Message.warning('请输入正确的11位电话号码')
+					this.phone = ''
+				};
+				if((this.idcard != '' || this.idcard != null)&&(!(/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/.test(this.idcard)))){
+					this.$Message.warning('请输入正确的18位身份证号码')
+					this.idcard = ''
+				}
+			},
+			updateOK(){
+				var th = this;
+				var birthday = th.$refs.brithday.visualValue;
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/update',
+					data:{
+						"staff_id":th.updateStaffId,
+						"name":th.upname,
+						"sex":th.upsex,
+						"department":th.updepartment,
+						"position":th.upposition,
+						"height":th.upheight,
+						"weight":th.upweight,
+						"salary":th.upsalary,
+						"phone":th.upphone,
+						"birthday":birthday,
+						"idcard":th.upidcard,
+						"staff_state":th.upstate
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.code == 1){
+						th.$Message.success('修改成功');
+						th.getDerpartment();
+					}else{
+						th.$Message.error('修改失败')
+					};
+				})
+			},
+			getSelectId(selection){
+				this.selected = selection;
+			},
+			deletemore(){
+				var th = this;
+				console.log(this.selected);
+				var data = [];
+				for(var i=0;i<this.selected.length;i++){
+					data.push(th.selected[i].staff_id);
+				};
+				if(data.length == 0){
+					th.$Message.warning('请勾选需要删除的数据');
+					return false;
+				};
+				console.log('删除的条数'+data.length);
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/deletes',
+					data:{
+						"list":data
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.code == 1){
+						th.$Message.success('成功删除'+obj.data.data+'条数据');
+						th.getDerpartment()
+					}else{
+						th.$Message.error('删除失败')
+					};
+				})
+			},
+>>>>>>> .r23
+			change(e){
+				console.log(e);
+				var th = this;
+				th.page = e;
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/all',
+					data:{
+						"tunnel_id":localStorage.getItem('tunnelid'),
+						"pageNum":th.page,
+						"limit":th.limit,
+						"name":th.personname,
+						"department":th.part,
+						"position":th.sposition
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					th.personInfo = obj.data.data.list;
+					for(var i=0;i<obj.data.data.list.length;i++){
+						if(obj.data.data.list[i].staff_state == 0){
+							th.personInfo[i].state = '无效'
+						}else if(obj.data.data.list[i].staff_state == 1){
+							th.personInfo[i].state = '有效'
+						}else{
+							th.personInfo[i].state = '注销'
+						};
+					};
+					th.total = obj.data.data.total;
+				})
+			},
+			changelimit(e){
+				var th = this;
+				th.limit = e;
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/all',
+					data:{
+						"tunnel_id":localStorage.getItem('tunnelid'),
+						"pageNum":th.page,
+						"limit":th.limit,
+						"name":th.personname,
+						"department":th.part,
+						"position":th.sposition
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					th.personInfo = obj.data.data.list;
+					for(var i=0;i<obj.data.data.list.length;i++){
+						if(obj.data.data.list[i].staff_state == 0){
+							th.personInfo[i].state = '无效'
+						}else if(obj.data.data.list[i].staff_state == 1){
+							th.personInfo[i].state = '有效'
+						}else{
+							th.personInfo[i].state = '注销'
+						};
+					};
+					th.total = obj.data.data.total;
+				})
+			},
+			search(){
+				var th = this;
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/all',
+					data:{
+						"tunnel_id":localStorage.getItem('tunnelid'),
+						"name":th.personname,
+						"department":th.part,
+						"position":th.sposition
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.data.total == 0){
+						th.$Message.warning('抱歉，未找到相关数据，请重新输入查询条件');
+					}else{
+						th.$Message.success('成功查询到'+obj.data.data.total+'条数据');
+					};
+					th.personInfo = obj.data.data.list;
+					for(var i=0;i<obj.data.data.list.length;i++){
+						if(obj.data.data.list[i].staff_state == 0){
+							th.personInfo[i].state = '无效'
+						}else if(obj.data.data.list[i].staff_state == 1){
+							th.personInfo[i].state = '有效'
+						}else{
+							th.personInfo[i].state = '注销'
+						};
+					};
+					th.total = obj.data.data.total;
+					th.part = '';
+					th.sposition = '';
+					th.personname = '';
+				})
+			},
+			addOK(){
+				var th = this;
+				var name = this.name;
+				var sex = this.sex;
+				var department = this.department;
+				var position = this.position;
+				var height = this.height;
+				var weight = this.weight;
+				var salary = this.salary;
+				var idcard = this.idcard;
+				var phone = this.phone;
+				var state = this.state;
+				var birthday = this.$refs.date.visualValue;
+				this.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/save',
+					data:{
+						"tunnel_id":localStorage.getItem('tunnelid'),
+						"name":name,
+						"sex":sex,
+						"department":department,
+						"position":position,
+						"height":height,
+						"weight":weight,
+						"salary":salary,
+						"phone":phone,
+						"birthday":birthday,
+						"idcard":idcard,
+						"staff_state":state
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					if(obj.data.code == 1){
+						th.$Message.success('添加成功');
+						th.getDerpartment();
+					}else{
+						th.$Message.error('添加失败')
+					};
+				})
+			},
+			cancel(){
+				
+			},
+			getDerpartment(){
+				var th = this;
+				th.$http({
+					method:'post',
+					url:Server+'tunnel/staff/department',
+					data:{
+						"tunnel_id":localStorage.getItem('tunnelid')
+					},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					console.log(obj.data);
+					th.partList = obj.data.data;
+				});
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/position',
+					data:{"tunnel_id":localStorage.getItem('tunnelid')},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					console.log(obj.data);
+					th.positionList = obj.data.data;
+				});
+				th.$http({
+					method:'post',
+					url:Server + 'tunnel/staff/all',
+					data:{"tunnel_id":localStorage.getItem('tunnelid'),"pageNum":"1","limit":"10",
+						"name":th.personname,
+						"department":th.part,
+						"position":th.sposition	},
+					headers:{
+						"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+					}
+				}).then(function(obj){
+					th.personInfo = obj.data.data.list;
+					if(obj.data.data.list.length == 0){
+						th.$Message.warning('当前隧道无相关员工')
+					};
+					for(var i=0;i<obj.data.data.list.length;i++){
+						if(obj.data.data.list[i].staff_state == 0){
+							th.personInfo[i].state = '无效'
+						}else if(obj.data.data.list[i].staff_state == 1){
+							th.personInfo[i].state = '有效'
+						}else{
+							th.personInfo[i].state = '注销'
+						};
+					};
+					th.total = obj.data.data.total;
+				})
+			},
+            show (id) {
+            	var th = this;
+            	th.modal2 = true;
+            	console.log(id);
+            	th.updateStaffId = id;
+            	th.$http({
+            		method:'post',
+            		url:Server + 'tunnel/staff/all',
+            		data:{
+            			"tunnel_id":localStorage.getItem('tunnelid'),
+            			"staff_id":id
+            		},
+            		headers:{
+            			"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+            		}
+            	}).then(function(obj){
+            		var data = obj.data.data.list[0];
+            		th.upname = data.name;
+            		th.upsex = data.sex;
+            		th.updepartment = data.department;
+            		th.upposition = data.position;
+            		th.upheight = data.height;
+            		th.upweight = data.weight;
+            		th.upsalary = data.salary;
+            		th.upphone = data.phone;
+            		th.upidcard = data.idcard_number;
+            		th.update = data.birthday;
+            		th.upstate = data.staff_state;
+            	})
+            },
+            seen(id){
+            	var th = this;
+            	th.modal3 = true;
+            	console.log(id);
+            	th.$http({
+            		method:'post',
+            		url:Server + 'tunnel/staff/all',
+            		data:{
+            			"tunnel_id":localStorage.getItem('tunnelid'),
+            			"staff_id":id
+            		},
+            		headers:{
+            			"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+            		}
+            	}).then(function(obj){
+            		var data = obj.data.data.list[0];
+            		th.onename = data.name;
+            		th.onesex = data.sex;
+            		th.onedepartment = data.department;
+            		th.oneposition = data.position;
+            		th.oneheight = data.height;
+            		th.oneweight = data.weight;
+            		th.onesalary = data.salary;
+            		th.onephone = data.phone;
+            		th.oneidcard = data.idcard_number;
+            		th.onedate = data.birthday;
+            		th.onestate = data.staff_state;
+            		th.onecreate_time = data.create_date;
+            	})
+            },
+            del(){
+            	var th = this;
+            	th.selectconmit = false;
+            	this.$http({
+               		method:'post',
+               		url:Server + 'tunnel/staff/delete',
+               		data:{"id":th.deletestaffid},
+               		headers:{
+               			"Content-Type":"application/json",
+						"token":localStorage.getItem('token')
+               		}
+               }).then(function(obj){
+               		console.log(obj);
+               		if(obj.data.code == 1){
+               			th.$Message.success('删除成功');
+               			th.getDerpartment();
+               		}else{
+               			th.$Message.error('删除失败')
+               		};
+               		
+               })
+            },
+            remove (id) {
+            	var th = this;
+            	th.selectconmit = true;
+               console.log(id);
+               th.deletestaffid = id;
+            }
+			
+		}
+	}
+</script>
+
+<style>
+	.row{
+		margin-top: 15px;
+	}
+	.weight{
+		font-size: 16px;
+		font-weight: 600;
+	}
+	.smallfont{
+		font-size: 14px;
+		font-weight: 400;
+	}
+</style>

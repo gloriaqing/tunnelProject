@@ -1,0 +1,150 @@
+<template>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<Select v-model="part" style="width:200px" filterable>
+			        <Option v-for="item in partList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			    </Select>
+			</div>
+			<div class="col-md-3">
+				<Select v-model="position" style="width:200px" filterable>
+			        <Option v-for="item in positionList" :value="item.value" :key="item.value">{{ item.name }}</Option>
+			    </Select>
+			</div>
+			<div class="col-md-3">
+				<Input v-model="personname">
+			        <span slot="prepend">人员姓名</span>
+			    </Input>
+			</div>
+			<div class="col-md-3">
+				<Button type="primary" shape="circle" icon="ios-search">搜索</Button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-1">
+				<Button type="success" shape="circle" icon="ios-plus">新增</Button>
+			</div>
+			<div class="col-md-1">
+				<Button type="success" shape="circle" icon="upload">导入</Button>
+			</div>
+			<div class="col-md-1">
+				<Button type="warning" shape="circle" icon="ios-trash">批量删除</Button>
+			</div>
+		</div>
+		<div class="row">
+			<h3>员工列表</h3>
+			<br />
+			<Table border ref="selection" :columns="columns" :data="data"></Table>
+	        <Button @click="handleSelectAll(true)">全选</Button>
+	        <Button @click="handleSelectAll(false)">取消</Button>
+	        <Page :total="total*1" @on-change="change($event)" @on-page-size-change="changelimit($event)" show-total show-sizer style="text-align: center;"></Page>
+		</div>
+	</div>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				total:'',
+				part:'',position:'',personname:'',
+				partList:[{name:'土方',value:1},{name:'爆破',value:2},{name:'强电',value:3}],
+				positionList:[{name:'普工',value:1},{name:'组长',value:2}],
+				personInfo:[],
+				columns:[{type: 'selection',width: 60,align: 'center'},
+				{title:'姓名',key:'name'},
+				{title:'电话',key:'phone'},
+				{title:'性别',key:'sex'},
+				{title:'身份证',key:'ID'},
+				{title:'所属部门',key:'department'},
+				{title:'职位',key:'position'},
+				{title:'紧急联系电话',key:'sphone'},
+				{title:'备注',key:'remark'},
+				{title: '操作',
+                        key: 'action',
+                        width: 150,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.show(parmas)
+                                        }
+                                    }
+                                }, '编辑'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.remove(params.code)
+                                        }
+                                    }
+                                }, '删除')
+                            ]);
+                        }
+                    }],
+				data:[{code:'左线',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'},
+				{code:'左线',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'},
+				{code:'左线',id:'123',name:'王璐',phone:'2017-11-23 08:30:10',sex:'瓦斯',ID:'%',part:'1.0',position:'1.5',sphone:'1.0',remark:'123'}]
+			}
+		},
+		mounted(){
+			this.getTotal(),
+			this.getPersonInfo()
+		},
+		methods:{
+			change(e){
+				console.log(e);
+			},
+			changelimit(e){
+				console.log(e);
+			},
+			getPersonInfo(){
+				var th = this;
+				this.$http({
+					method:'post',
+					url:Server + 'api/users/queryAll',
+					headers:{
+						"Content-Type":"application/json"
+					}
+				}).then(function(obj){
+					console.log(obj);
+					th.personInfo = obj.data.data;
+				})
+			},
+			getTotal(){
+				this.total = this.data.length;
+			},
+			handleSelectAll (status) {
+                this.$refs.selection.selectAll(status);
+            },
+            show (params) {
+            	console.log(params);
+                this.$Modal.info({
+                    title: 'User Info'
+                })
+            },
+            remove (code) {
+               
+            }
+			
+		}
+	}
+</script>
+
+<style>
+	.row{
+		margin-top: 15px;
+	}
+</style>

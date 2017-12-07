@@ -1,0 +1,51 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import home from '@/components/home'
+
+
+import action from '@/views/action.vue'
+import nowVideo from '@/views/nowVideo.vue'
+
+
+import tunnelGeneral from '@/views/tunnelGeneral.vue'
+import real_timeData from '@/views/real_timeData.vue'
+import personInfo from '@/views/personInfo.vue'
+import attenceInfo from '@/views/attenceInfo.vue'
+import loading from '@/views/loading.vue'
+//import personLocation from '@/views/personLocation.vue'
+import login from '@/components/login.vue'
+
+import managePeople from '@/views/managePeople.vue'
+import nowDataGas from '@/views/nowDataGas.vue'
+import gas from '@/views/gas.vue'
+Vue.use(Router)
+
+export default new Router({
+	mode:'history',
+	 routes: [
+		{
+        path: '/view',
+        component: home,
+        children: [                        
+           
+            { path: '/managePeople', component: managePeople, name: '人员管理' },
+             { path: '/nowDataGas', component: nowDataGas, name: '环境监测' },
+            { path: '/gas', component: gas, name: '环境监测' },
+            //update by qxx
+            
+            { path: '/action', component: action, name: '' },
+            { path: '/nowVideo', component: nowVideo, name: '' },
+            
+            //update by ww
+            
+            { path: '/tunnelGeneral', component: tunnelGeneral, name: '' },
+            { path: '/real_timeData', component: real_timeData, name: '' },
+            { path: '/personInfo', component: personInfo, name: '' },
+            { path: '/attenceInfo', component: attenceInfo, name: '' },
+            { path: '/loading', component: loading, name: '' },
+//          { path: '/personLocation', component: personLocation, name: '' }
+        ]    
+    },
+            { path: '/', component: login, name: '' }
+		]
+})
